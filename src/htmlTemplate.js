@@ -127,17 +127,20 @@ function getClientScript() {
           return [];
         }
 
-        const matches = text.match(/https?:\\/\\/[^\\s]+/gi) || [];
-        const urls = matches
-          .map(url => url.trim())
-          .filter(url => url && !url.toLowerCase().startsWith('url'));
+        const matches = [];
+        const urlRegex = /(https?:\\/\\/[^\s"'`,;<>]+)/gi;
+        let match;
+        while ((match = urlRegex.exec(text)) !== null) {
+          const cleaned = match[1]
+            .trim()
+            .replace(/[)\]\}]+$/, '')
+            .replace(/["'`,;:.!?]+$/, '');
+          if (cleaned && !cleaned.toLowerCase().startsWith('url')) {
+            matches.push(cleaned);
+          }
+        }
 
-        // Remove any accidental trailing punctuation such as commas from copied text
-        return Array.from(
-          new Set(
-            urls.map(url => url.replace(/["'`,;]+$/, ''))
-          )
-        );
+        return Array.from(new Set(matches));
       }
 
       function parseSitemap(text) {
