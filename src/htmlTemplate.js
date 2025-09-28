@@ -123,12 +123,21 @@ function getClientScript() {
       const mappings = [];
 
       function parseGsc(text) {
-        return text
-          .split(/\\r?\\n/)
-          .map(line => line.trim())
-          .filter(line => line && !line.toLowerCase().startsWith('url'))
-          .map(line => line.split(/\\s+/)[0])
-          .filter(Boolean);
+        if (!text) {
+          return [];
+        }
+
+        const matches = text.match(/https?:\\/\\/[^\\s]+/gi) || [];
+        const urls = matches
+          .map(url => url.trim())
+          .filter(url => url && !url.toLowerCase().startsWith('url'));
+
+        // Remove any accidental trailing punctuation such as commas from copied text
+        return Array.from(
+          new Set(
+            urls.map(url => url.replace(/["'`,;]+$/, ''))
+          )
+        );
       }
 
       function parseSitemap(text) {
