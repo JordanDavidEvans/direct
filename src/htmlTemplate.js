@@ -128,13 +128,13 @@ function getClientScript() {
         }
 
         const matches = [];
-        const urlRegex = /(https?:\\/\\/[^\s"'`,;<>]+)/gi;
+        const urlRegex = /(https?:\\/\\/[^\s"'\u0060,;<>]+)/gi;
         let match;
         while ((match = urlRegex.exec(text)) !== null) {
           const cleaned = match[1]
             .trim()
             .replace(/[)\]\}]+$/, '')
-            .replace(/["'`,;:.!?]+$/, '');
+            .replace(/["'\u0060,;:.!?]+$/, '');
           if (cleaned && !cleaned.toLowerCase().startsWith('url')) {
             matches.push(cleaned);
           }
